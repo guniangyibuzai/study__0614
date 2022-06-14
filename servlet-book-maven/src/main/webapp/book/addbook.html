@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md8 layui-col-md-offset2">
+            <form class="layui-form" th:action="${#request.getContextPath()} + '/admin/addbook'" method="post">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" required lay-verify="required" placeholder="请输入书名"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">作者：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="author" required lay-verify="required" placeholder="请输入作者名"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">价格：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="price" required lay-verify="required|number" placeholder="请输入价格"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">分类：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="category" required lay-verify="required" placeholder="请输入分类"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">出版社：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="publisher" placeholder="请输入出版社" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">出版时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="publishdate" name="publishdate" lay-verify="date"
+                               placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">库存：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="count" required lay-verify="required|number" placeholder="请输入库存"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block" th:text="${rlt}"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form,
+            laydate = layui.laydate;
+
+        laydate.render({elem: '#publishdate'});
+
+    });
+</script>
+</body>
+</html>

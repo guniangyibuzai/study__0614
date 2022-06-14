@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" >
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="../static/layui/layui.js"></script>
+        <link rel="stylesheet" href="../static/layui/css/layui.css">
+        <style type="text/css">
+            form label{
+                margin-left: -30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="layui-container">
+            <div class="layui-row">
+                <form class="layui-form-item"  id="bookFrom">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">书名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="bookname" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">作者</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="author" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">分类</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="category" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-layout-right">
+                        <button class="layui-btn layui-btn-sm" id="resetbtn" type="reset">重置查询条件</button>
+                        <button class="layui-btn layui-btn-sm" id="querybtn">查询</button>
+                    </div>
+                </form>
+            </div>
+            <div class="layui-row">
+                <table id="booktable" lay-filter="tableop"></table>
+            </div>
+            <script type="text/html" id="bookop">
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+        </div>
+        <script>
+            //JavaScript代码区域
+            layui.use(['element', 'table', 'form'], function() {
+                var element = layui.element
+                    ,layer = layui.layer
+                    ,table = layui.table
+                    ,$ = layui.jquery;
+
+                // 渲染表格数据
+                var bookTable = table.render({
+                    elem: '#booktable' // 目标表格，写表格的id
+                    ,url:'/request/book/all'
+                    ,where: { //设定异步数据接口的额外参数，根据需要设置
+                        bookname: $('#bookname').val(),
+                        authorname: $('#author').val(),
+                        category: $('#category').val()
+                    }
+                    ,page: true // 开启分页
+                    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                    ,cols: [ [
+                      {type:'checkbox'}
+                      ,{field:'id', width:80, title: '序号'}
+                      ,{field:'name', width:'30%', title: '图书名称', sort: true}
+                      ,{field:'author', width:80, title: '作者', sort: true}
+                      ,{field:'category', width:80, title: '酒店'}
+                      ,{field:'price', title: '价格', width: 80}
+                      ,{field:'publisher', width:300, title: '出版社', sort: true}
+                      ,{field:'publishdate',width:300, title: '出版时间', sort: true}
+                      ,{field:'count', title: '库存'}
+                      ,{fixed:'right', width:60, align:'center', toolbar: '#bookop'}
+                    ] ]
+                });
+
+                // 行工具条监听
+                table.on('tool(tableop)', function (obj) {
+                    var data = obj.data; // 当前行数据，通过data['id']或data.id来获取对应列的数据
+                    var layEvent = obj.event;
+                    if (layEvent === 'del') { //删除
+                        layer.confirm('确定删除当前行的图书信息吗？', function (index) {
+                            // 发送一个删除请求（AJAX方式），
+                            $.ajax({
+                                type: 'post'
+                                ,url: '[[@{/}]]' + 'admin/delete/' + data['id']
+                                ,dataType: 'json'
+                                ,success: function(rlt){ // 要求返回：{"code":1, "msg":"删除成功"}
+                                    if (rlt.code == 1){
+                                        obj.del(); // 调用LayUI函数删除对应行的DOM元素，并更新缓存
+                                    }
+                                    layer.msg(rlt.msg); // 弹出删除结果
+                                }
+                            });
+                            layer.close(index);  // 关系询问的弹出层
+                        });
+                    }
+                });
+
+                // 查询按钮点击事件
+                $("#querybtn").click(function (){
+                    bookTable.reload({
+                        where: { //设定异步数据接口的额外参数，根据需要设置
+                            bookname: $('#bookname').val(),
+                            authorname: $('#author').val(),
+                            category: $('#category').val()
+                        }
+                        , page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                    });
+                    return false;
+                });
+
+
+            });
+        </script>
+    </body>
+</html>
